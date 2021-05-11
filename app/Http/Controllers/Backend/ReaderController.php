@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\Auth;
 use App\Http\Requests\ReaderRequest;
 use App\Models\Reader;
 use Illuminate\Http\Request;
@@ -13,10 +14,33 @@ class ReaderController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
+
+        if ($request->has('type') && $request->query('type') === 'api') {
+
+            $search = $request->query('search');
+            $value = $request->query('value');
+
+            $query = Reader::query();
+
+            if ($search === 'id') {
+                $query = $query->where('id', $value);
+            } else if ($search === 'name') {
+                $query = $query->like('name', $value);
+            } else if($search === 'phone'){
+                $query = $query->like('phone', $value);
+            }
+
+            return response()->json([
+                'data' => $query->get()->map(function($item){
+                    $item->avatar = asset($item->avatar);
+                    return $item;
+                })
+            ], 200);
+        }
         return view('backend.reader.index', [
             'readers' => Reader::all(),
         ]);
@@ -42,6 +66,8 @@ class ReaderController extends Controller
     {
         $data = $request->only('name', 'address', 'phone');
         $data['avatar'] = 'https://i.pinimg.com/originals/d8/ca/c7/d8cac7903de22dad05d9f17ace441d97.jpg';
+        $data['created_by'] = \Illuminate\Support\Facades\Auth::user()->id;
+        $data['updated_by'] = \Illuminate\Support\Facades\Auth::user()->id;
         try {
             Reader::create($data);
         } catch (\Exception $exception) {
@@ -80,13 +106,14 @@ class ReaderController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\ReaderRequest $request
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(ReaderRequest $request, $id)
+    public function update(ReaderRequest $request, int $id): \Illuminate\Http\RedirectResponse
     {
         $data = $request->only('name', 'address', 'phone');
+        $data['updated_by'] = \Illuminate\Support\Facades\Auth::user()->id;
         try {
             Reader::query()
                 ->where('id', $id)->update($data);

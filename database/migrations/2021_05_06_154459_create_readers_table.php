@@ -19,6 +19,8 @@ class CreateReadersTable extends Migration
             $table->string('phone');
             $table->string('address');
             $table->string('avatar');
+            $table->integer('created_by')->default(1);
+            $table->integer('updated_by')->default(1);
             $table->timestamps();
             $table->softDeletes();
         });

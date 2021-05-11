@@ -4,7 +4,7 @@
 namespace App\Defines;
 
 
-class Reader
+class Reader implements Define
 {
     public static function rules(): array
     {

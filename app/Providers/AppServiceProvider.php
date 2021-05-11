@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Defines\Language;
+use App\Models\Book;
+use App\Models\Reader;
+use App\Observers\BookObserver;
+use App\Observers\ReaderObserver;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
             "plugins/datatables-buttons/js/dataTables.buttons.min.js",
             "plugins/datatables-buttons/js/buttons.bootstrap4.min.js"
         ]);
+
+        View::share('_LANGUAGES',Language::get());
+
     }
 
     /**
@@ -31,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Reader::observe(ReaderObserver::class);
+        Book::observe(BookObserver::class);
     }
 }

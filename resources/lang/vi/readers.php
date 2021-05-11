@@ -17,6 +17,7 @@ return [
     'create_success' => 'Thêm mới thành công',
     'edit_error' => 'Chỉnh sửa thất bại',
     'edit_success' => 'Chỉnh sửa thành công',
+    'id' => 'Mã độc giả'
 ]
 
 ?>

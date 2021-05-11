@@ -5,6 +5,10 @@
         table {
             text-align: center;
         }
+
+        .delete-reader{
+            color: #fff;
+        }
     </style>
 @endpush
 
@@ -51,8 +55,8 @@
                                            class="btn btn-primary btn-flat">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="{{route('readers.destroy',['reader' => $reader->id])}}"
-                                           class="btn btn-warning delete-reader btn-flat">
+                                        <a  href="{{route('readers.destroy',['reader' => $reader->id])}}"
+                                           class="btn btn-danger delete-reader btn-flat">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
@@ -112,7 +116,9 @@
                     "paginate": {
                         "previous": 'Trang trước',
                         'next': 'Trang sau'
-                    }
+                    },
+                    'emptyTable': 'Không tìm thấy kết quả',
+                    "zeroRecords": 'Không tìm thấy kết quả'
                 }
             });
 

@@ -65,41 +65,41 @@
     <script src="{{asset('assets/dist/js/demo.js')}}"></script>
     <script>
         $(document).ready(function () {
-            {{--$('#form_create_reader').validate({--}}
-            {{--    rules: {--}}
-            {{--        name: {--}}
-            {{--            required: true,--}}
-            {{--        },--}}
-            {{--        phone: {--}}
-            {{--            required: true,--}}
-            {{--        },--}}
-            {{--        address: {--}}
-            {{--            required: true--}}
-            {{--        },--}}
-            {{--    },--}}
-            {{--    messages: {--}}
-            {{--        name: {--}}
-            {{--            required: "{{trans('readers.name_required')}}"--}}
-            {{--        },--}}
-            {{--        phone: {--}}
-            {{--            required: "{{trans('readers.phone_required')}}"--}}
-            {{--        },--}}
-            {{--        address: {--}}
-            {{--            required: "{{trans('readers.address_required')}}"--}}
-            {{--        }--}}
-            {{--    },--}}
-            {{--    errorElement: 'span',--}}
-            {{--    errorPlacement: function (error, element) {--}}
-            {{--        error.addClass('invalid-feedback');--}}
-            {{--        element.closest('.form-group').append(error);--}}
-            {{--    },--}}
-            {{--    highlight: function (element, errorClass, validClass) {--}}
-            {{--        $(element).addClass('is-invalid');--}}
-            {{--    },--}}
-            {{--    unhighlight: function (element, errorClass, validClass) {--}}
-            {{--        $(element).removeClass('is-invalid');--}}
-            {{--    }--}}
-            {{--});--}}
+            $('#form_create_reader').validate({
+                rules: {
+                    name: {
+                        required: true,
+                    },
+                    phone: {
+                        required: true,
+                    },
+                    address: {
+                        required: true
+                    },
+                },
+                messages: {
+                    name: {
+                        required: "{{trans('readers.name_required')}}"
+                    },
+                    phone: {
+                        required: "{{trans('readers.phone_required')}}"
+                    },
+                    address: {
+                        required: "{{trans('readers.address_required')}}"
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
         })
     </script>
 @endpush
