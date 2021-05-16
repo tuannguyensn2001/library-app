@@ -131,7 +131,7 @@
                                            v-model="readerSearch">
                                 </div>
 
-                                <div class="row" v-if="!searchIsEmpty">
+                                <div class="row" v-if="true">
                                     <div class="col-md-4" v-for="reader in readers" :key="reader.id">
                                         <div @click="pickReader(reader.id)"
                                              class="reader-card d-flex justify-content-center">
@@ -200,7 +200,7 @@
                                            v-model="bookSearch">
                                 </div>
 
-                                <div class="row" v-if="!searchIsEmpty">
+                                <div class="row" v-if="true">
                                     <div class="col-md-4" v-for="book in books" :key="book.id">
                                         <div @click="pickBook(book.id)" class="reader-card">
                                             <div>

@@ -7,6 +7,8 @@
             text-align: center;
         }
 
+
+
         .delete-reader {
             color: #fff;
         }
@@ -41,7 +43,7 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div>
-                                <table class="table table-bordered table-striped ">
+                                <table class="table  table-bordered table-striped ">
                                     <thead>
                                     <th scope="col">{{trans('action.number')}}</th>
                                     <th scope="col">{{trans('users.username')}}</th>
@@ -68,6 +70,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button
+                                                @click="openModelDelete(user.id)"
                                                 class="btn btn-danger delete-reader btn-flat">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -164,7 +167,28 @@
                 </div>
                 <!-- /.modal-dialog -->
             </div>
+            <div class="modal fade" id="modal-default">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">{{trans('action.confirm_delete')}}</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default btn-flat" data-dismiss="modal">{{trans('action.cancel')}}</button>
+                            <button  type="button" @click="deleteUser"
+                                     class="btn btn-danger btn-flat confirm_delete_reader">{{trans('action.confirm')}}</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
         </div>
+
 
     </div>
 @endsection
@@ -220,6 +244,21 @@
                             this.user = this.listUsers.find(user => user.id === id);
                         }
                         $('#modal-user').modal('show');
+                    },
+                    openModelDelete(id){
+                      this.user = this.listUsers.find(item => item.id === id);
+                        $('#modal-default').modal('show');
+                    },
+                    deleteUser(){
+                      axios.delete(`/admin/users/${this.user.id}`)
+                        .then(response => {
+                            toastr.success('{{trans('action.delete_success')}}');
+                            this.listUsers = this.listUsers.filter(item => item.id !== this.user.id);
+                        })
+                        .catch(err => toastr.err('{{trans('action.delete_error')}}'))
+                        .finally(() => {
+                            $('#modal-default').modal('hide');
+                        })
                     },
                     confirm() {
                         if (this.type === 'create') {

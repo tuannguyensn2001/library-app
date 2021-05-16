@@ -1,5 +1,11 @@
 @extends('backend.master')
 
+@push('css')
+    <style>
+
+    </style>
+    @endpush
+
 @section('content')
     <div class="row">
         <div class="col-lg-3 col-6">
@@ -75,4 +81,7 @@
 
 @push('scripts')
     <script src="{{asset('assets/dist/js/pages/dashboard.js')}}"></script>
+    <script>
+
+    </script>
 @endpush

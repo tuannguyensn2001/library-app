@@ -7,7 +7,9 @@ use App\Models\Book;
 use App\Models\Category;
 use App\Models\Reader;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Prophecy\Exception\Exception;
 
 class BookController extends Controller
 {
@@ -106,11 +108,14 @@ class BookController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
     public function edit($id)
     {
-        //
+        return view('backend.book.edit',[
+            'book' => Book::find($id),
+            'categories' => Category::all()
+        ]);
     }
 
     /**
@@ -118,21 +123,47 @@ class BookController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->only('name', 'category_id', 'language', 'description', 'quantity', 'author');
+        $data['updated_by'] = \Illuminate\Support\Facades\Auth::user()->id;
+
+        if ($request->has('thumbnail')){
+            $file = $request->file('thumbnail');
+            $thumbnail = Storage::put('public/book', $file);
+
+            $data['thumbnail'] = Storage::url($thumbnail);
+        }
+
+        try {
+            Book::where('id',$id)->update($data);
+        } catch (\Exception $exception){
+            dd($exception);
+            return back()->with('error', trans('action.edit_error'))->withInput();
+        }
+
+        return redirect()->route('books.index')->with('success', trans('action.edit_success'));
+
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
-        //
+        try {
+            Book::find($id)->delete();
+        } catch (Exception $exception){
+            return response()->json([
+                'message' => trans('action.delete_error')
+            ], 400);
+        }
+        Session::flash('success', trans('action.delete_success'));
+        return response()->json([], 200);
     }
 }
