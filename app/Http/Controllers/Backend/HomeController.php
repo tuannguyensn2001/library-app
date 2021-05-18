@@ -62,7 +62,9 @@ class HomeController extends Controller
         switch ($type) {
             case 'order_not_done':
                 $data = Order::query()->select('book_id')->where('is_done', 0)->groupBy('book_id')->get()->map(function ($item) {
-                    return Book::find($item->book_id);
+                    return (Book::find($item->book_id)) ;
+                })->filter(function($item){
+                    return !is_null($item);
                 });
                 break;
 

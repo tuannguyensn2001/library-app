@@ -32,7 +32,7 @@
                     <div class="card-header">
                         <h3 class="card-title">{{trans('books.list')}}</h3>
                         <div class="d-flex justify-content-end">
-                            <a href="{{route('readers.create')}}"
+                            <a href="{{route('books.create')}}"
                                class="btn btn-primary btn-flat">{{trans('books.create')}}</a>
                         </div>
                     </div>

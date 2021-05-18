@@ -303,7 +303,13 @@
                             const {redirect} = response.data;
                             window.location.href = redirect;
                         })
-                        .catch(err => toastr.error(err.response.data.message));
+                        .catch(err => {
+                            if (err.response.data.errors){
+                                toastr.error(err.response.data.errors[0])
+                            } else {
+                                toastr.error(err.response.data.message);
+                            }
+                        });
 
                 }
             },

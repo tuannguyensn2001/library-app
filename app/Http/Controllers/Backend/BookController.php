@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BookRequest;
 use App\Models\Book;
 use App\Models\Category;
 use App\Models\Reader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Prophecy\Exception\Exception;
 
 class BookController extends Controller
@@ -72,11 +74,21 @@ class BookController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    public function store(BookRequest $request): \Illuminate\Http\RedirectResponse
     {
-        $file = $request->file('thumbnail');
+
+        $validator = Validator::make($request->all(),[
+            'thumbnail' => 'file|required'
+         ]);
+
+        if ($validator->fails()){
+            return redirect()->back()->withErrors(trans('books.file.thumbnail'))->withInput();
+        }
+
         $data = $request->only('name', 'category_id', 'language', 'description', 'quantity', 'author');
 
+
+        $file = $request->file('thumbnail');
         $thumbnail = Storage::put('public/book', $file);
 
         $data['thumbnail'] = Storage::url($thumbnail);
@@ -125,7 +137,7 @@ class BookController extends Controller
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(BookRequest $request, $id)
     {
         $data = $request->only('name', 'category_id', 'language', 'description', 'quantity', 'author');
         $data['updated_by'] = \Illuminate\Support\Facades\Auth::user()->id;

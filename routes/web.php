@@ -26,6 +26,9 @@ Route::group(['prefix' => 'admin'],function(){
         Route::resource('books',\App\Http\Controllers\Backend\BookController::class);
         Route::get('/orders/search',[\App\Http\Controllers\Backend\OrderController::class,'search'])->name('orders.search');
         Route::resource('orders',\App\Http\Controllers\Backend\OrderController::class);
+        Route::get('/users/profile',[\App\Http\Controllers\Backend\UserController::class,'profile'])->name('users.profile');
+        Route::post('/users/profile',[\App\Http\Controllers\Backend\UserController::class,'updateProfile'])->name('users.update.profile');
+        Route::post('/users/profile/avatar',[\App\Http\Controllers\Backend\UserController::class,'avatar'])->name('users.update.avatar');
         Route::resource('users',\App\Http\Controllers\Backend\UserController::class);
 
     });

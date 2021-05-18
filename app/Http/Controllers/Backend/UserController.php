@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -44,6 +48,8 @@ class UserController extends Controller
         $user = $request->get('user');
 
         $user['password'] = Hash::make($user['password']);
+
+        $user['avatar'] = 'https://www.lewesac.co.uk/wp-content/uploads/2017/12/default-avatar.jpg';
 
         try {
             $user = User::create($user);
@@ -129,4 +135,45 @@ class UserController extends Controller
         }
         return response()->json([], 200);
     }
+
+    public function profile()
+    {
+        return view('backend.user.profile');
+    }
+
+    public function updateProfile(UserRequest $request)
+    {
+        $name = $request->input('name');
+        $password = $request->input('password');
+
+        try {
+            Auth::user()->name = $name;
+            Auth::user()->password = Hash::make($password);
+            Auth::user()->save();
+        } catch (\Exception $exception){
+            return redirect()->back()->with('error',trans('action.edit_error'));
+        }
+
+        return redirect()->back()->with('success',trans('action.edit_success'));
+    }
+
+    public function avatar(Request  $request)
+    {
+        $file = $request->file('avatar');
+        $avatar = Storage::put('/public/user',$file);
+
+       try {
+           Auth::user()->avatar = Storage::url($avatar);
+           Auth::user()->save();
+       } catch (\Exception $exception){
+           return response()->json([
+               'message' => trans('action.edit_error')
+           ],400);
+       }
+
+       return response()->json([
+           'message' => trans('action.edit_success')
+       ],200);
+    }
+
 }

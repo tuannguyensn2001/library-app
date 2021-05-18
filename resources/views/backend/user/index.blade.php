@@ -263,7 +263,28 @@
                     confirm() {
                         if (this.type === 'create') {
                             const user = {...this.user};
+
+                            if (!user.name){
+                                toastr.error('Tên không được để trống');
+                                return;
+                            }
+
+                            if (!user.email) {
+                                toastr.error('Email không được để trống');
+                                return;
+                            }
+                            if (user.password.length < 6){
+                                toastr.error('Mật khẩu tối thiểu 6 ký tự');
+                                return;
+                            }
+
+                            if (user.password !== user.confirm_password){
+                                toastr.error('Mật khẩu xác nhận không trùng khớp');
+                                return;
+                            }
+
                             delete user.confirm_password;
+
                             axios.post('{{route('users.store')}}', {
                                 user
                             })
@@ -280,6 +301,13 @@
                         const user = {...this.user};
                         delete user.confirm_password;
                         delete user.password;
+
+                        if (!user.name){
+                            toastr.error('Tên không được để trống');
+                            return;
+                        }
+
+
 
                         axios.put(`/admin/users/${user.id}`, {user})
                             .then(response => {

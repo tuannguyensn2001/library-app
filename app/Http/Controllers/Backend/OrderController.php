@@ -52,7 +52,7 @@ class OrderController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(OrderRequest $request): JsonResponse
     {
         $order = $request->get('order');
 
@@ -175,10 +175,14 @@ class OrderController extends Controller
     {
         $date = Carbon::createFromFormat('d/m/Y', '05/06/2021');
 
-        $query = Order::with('reader', 'book');
+        $query = Order::with(['reader' => function($query){
+            return $query->withTrashed();
+        },'book' => function($query){
+            return $query->withTrashed();
+        }]);
 
         if ($request->has('reader_name')) {
-            $name = Reader::query()->select('id')->like('name', $request->query('reader_name'))->get()->map(function ($item) {
+            $name = Reader::withTrashed()->query()->select('id')->like('name', $request->query('reader_name'))->get()->map(function ($item) {
                 return $item->id;
             })->toArray();
 
@@ -188,7 +192,7 @@ class OrderController extends Controller
 
         if ($request->has('book_name')) {
 
-            $name = Book::query()->select('id')->like('name', $request->query('book_name'))->get()->map(function ($item) {
+            $name = Book::withTrashed()->query()->select('id')->like('name', $request->query('book_name'))->get()->map(function ($item) {
                 return $item->id;
             })->toArray();
 

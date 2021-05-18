@@ -24,7 +24,8 @@ return [
     'success' => 'Thành công',
     'search_by' => 'Tìm kiếm theo',
     'search_here' => 'Tìm kiếm tại đây',
-    'more' => 'Xem thêm'
+    'more' => 'Xem thêm',
+    'settings' => 'Cài đặt'
 
 
 ]

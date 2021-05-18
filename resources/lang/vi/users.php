@@ -14,5 +14,6 @@ return [
     'role' => 'Vai trò',
     'status' => 'Trạng thái',
     'active' => 'Hoạt động',
-    'not_active' => 'Không hoạt động'
+    'not_active' => 'Không hoạt động',
+    'profile' => 'Thông tin cá nhân'
 ];

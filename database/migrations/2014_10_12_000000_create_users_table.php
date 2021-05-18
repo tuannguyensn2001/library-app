@@ -22,7 +22,9 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->integer('is_admin'); //system thu thu
             $table->integer('is_active')->default(1);
+            $table->string('avatar');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
