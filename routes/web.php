@@ -29,7 +29,7 @@ Route::group(['prefix' => 'admin'],function(){
         Route::get('/users/profile',[\App\Http\Controllers\Backend\UserController::class,'profile'])->name('users.profile');
         Route::post('/users/profile',[\App\Http\Controllers\Backend\UserController::class,'updateProfile'])->name('users.update.profile');
         Route::post('/users/profile/avatar',[\App\Http\Controllers\Backend\UserController::class,'avatar'])->name('users.update.avatar');
-        Route::resource('users',\App\Http\Controllers\Backend\UserController::class);
+        Route::resource('users',\App\Http\Controllers\Backend\UserController::class)->middleware('is_admin');
 
     });
 });
