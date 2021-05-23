@@ -8,16 +8,32 @@ use App\Models\Book;
 use App\Models\Order;
 use App\Models\Reader;
 use Barryvdh\Debugbar\Facade;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $data['order_not_done'] = Order::query()->select('book_id')->where('is_done', 0)->groupBy('book_id')->get()->count();
+        $data['order_not_done'] = Order::all()->filter(function ($item) {
+            $done = Carbon::parse($item->done_at);
+            $to = Carbon::parse($item->to);
+            return $done->greaterThan($to);
+        })->map(function ($item) {
+            return $item->book_id;
+        })->unique()->count();
+
+
         $data['books'] = Book::all()->count();
         $data['reader_ordering'] = Order::query()->select('reader_id')->where('is_done', 0)->groupBy('reader_id')->get()->count();
-        $data['reader_order_late'] = Order::query()->select('reader_id')->whereDate('done_at', 'to')->groupBy('reader_id')->get()->count();
+        $data['reader_order_late'] = Order::all()->filter(function ($item) {
+            $done = Carbon::parse($item->done_at);
+            $to = Carbon::parse($item->to);
+            return $done->greaterThan($to);
+        })->map(function ($item) {
+            return $item->reader_id;
+        })->unique()->count();
+
         return view('backend.index', [
             'data' => $data
         ]);
@@ -61,9 +77,15 @@ class HomeController extends Controller
 
         switch ($type) {
             case 'order_not_done':
-                $data = Order::query()->select('book_id')->where('is_done', 0)->groupBy('book_id')->get()->map(function ($item) {
-                    return (Book::find($item->book_id)) ;
-                })->filter(function($item){
+                $data = Order::all()->filter(function ($item) {
+                    $done = Carbon::parse($item->done_at);
+                    $to = Carbon::parse($item->to);
+                    return $done->greaterThan($to);
+                })->map(function ($item) {
+                    return $item->book_id;
+                })->unique()->map(function($item){
+                    return Book::find($item);
+                })->filter(function ($item) {
                     return !is_null($item);
                 });
                 break;
@@ -81,9 +103,19 @@ class HomeController extends Controller
                 break;
 
             case 'reader_order_late':
-                $data = Order::query()->select('reader_id')->whereDate('done_at', 'to')->groupBy('reader_id')->get()->map(function ($item) {
-                    return Reader::find($item->reader_id);
-                });;
+                $data =Order::all()->filter(function ($item) {
+                    $done = Carbon::parse($item->done_at);
+                    $to = Carbon::parse($item->to);
+                    return $done->greaterThan($to);
+                })->map(function ($item) {
+                    return $item->reader_id;
+                })->unique()->map(function($item){
+                    return Reader::find($item);
+                })->filter(function ($item) {
+                    return !is_null($item);
+                });
+                break;
+
         }
 
         return view('backend.statistic', [

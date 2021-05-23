@@ -17,11 +17,11 @@
 @endpush
 
 @section('module_name')
-    <h1>{{trans('books.index')}}</h1>
+    <h1>Thống kê</h1>
 @endsection
 
 @section('module')
-    <li class="breadcrumb-item active"><p>{{trans('books.index')}}</p></li>
+    <li class="breadcrumb-item active"><p>Thống kê</p></li>
 @endsection
 
 @section('content')
@@ -30,10 +30,9 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">{{trans('books.list')}}</h3>
+                        <h3 class="card-title">{{trans("index.{$type}")}}</h3>
                         <div class="d-flex justify-content-end">
-                            <a href="{{route('readers.create')}}"
-                               class="btn btn-primary btn-flat">{{trans('books.create')}}</a>
+
                         </div>
                     </div>
                     <!-- /.card-header -->
