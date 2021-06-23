@@ -25,7 +25,8 @@ return [
     'search_by' => 'Tìm kiếm theo',
     'search_here' => 'Tìm kiếm tại đây',
     'more' => 'Xem thêm',
-    'settings' => 'Cài đặt'
+    'settings' => 'Cài đặt',
+    'check_success' => 'Duyệt thành công'
 
 
 ]

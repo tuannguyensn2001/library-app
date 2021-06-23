@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @method static create(mixed $order)
  * @method static find(int $id)
+ * @method static findOrFail($id)
  */
 class Order extends Model
 {

@@ -22,7 +22,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('backend.user.index',[
+        return view('backend.user.index', [
             'users' => User::all(),
         ]);
     }
@@ -53,22 +53,22 @@ class UserController extends Controller
 
         try {
             $user = User::create($user);
-        } catch(\Exception $exception){
+        } catch (\Exception $exception) {
 
             return response()->json([
                 'message' => trans('action.create_error')
-            ],400);
+            ], 400);
         }
         return response()->json([
             'message' => trans('action.create_success'),
             'data' => $user
-        ],200);
+        ], 200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -79,7 +79,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -91,44 +91,46 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param  int  $id
+     * @param int $id
      * @return JsonResponse
      */
     public function update(Request $request, $id)
     {
-        $user = $request->get('user');
+        $users = $request->get('user');
 
-        unset($user['id']);
+        unset($users['id']);
 
         try {
             $user = User::find($id);
-            $user->name = $user['name'];
-            $user->is_active = $user['is_active'];
-            $user->is_admin = $user['is_admin'];
+            $user->name = $users['name'];
+            $user->is_active = $users['is_active'];
+            $user->is_admin = $users['is_admin'];
+            $user->reader_id = $users['reader_id'];
+
             $user->save();
-        } catch(\Exception $exception){
+        } catch (\Exception $exception) {
             return response()->json([
                 'message' => trans('action.edit_error')
-            ],400);
+            ], 400);
         }
         return response()->json([
             'message' => trans('action.edit_success'),
             'data' => User::find($id),
-        ],200);
+        ], 200);
 
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return JsonResponse
      */
     public function destroy($id)
     {
         try {
             User::find($id)->delete();
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return response()->json([
                 'message' => trans('action.delete_error')
             ], 400);
@@ -150,30 +152,30 @@ class UserController extends Controller
             Auth::user()->name = $name;
             Auth::user()->password = Hash::make($password);
             Auth::user()->save();
-        } catch (\Exception $exception){
-            return redirect()->back()->with('error',trans('action.edit_error'));
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', trans('action.edit_error'));
         }
 
-        return redirect()->back()->with('success',trans('action.edit_success'));
+        return redirect()->back()->with('success', trans('action.edit_success'));
     }
 
-    public function avatar(Request  $request)
+    public function avatar(Request $request)
     {
         $file = $request->file('avatar');
-        $avatar = Storage::put('/public/user',$file);
+        $avatar = Storage::put('/public/user', $file);
 
-       try {
-           Auth::user()->avatar = Storage::url($avatar);
-           Auth::user()->save();
-       } catch (\Exception $exception){
-           return response()->json([
-               'message' => trans('action.edit_error')
-           ],400);
-       }
+        try {
+            Auth::user()->avatar = Storage::url($avatar);
+            Auth::user()->save();
+        } catch (\Exception $exception) {
+            return response()->json([
+                'message' => trans('action.edit_error')
+            ], 400);
+        }
 
-       return response()->json([
-           'message' => trans('action.edit_success')
-       ],200);
+        return response()->json([
+            'message' => trans('action.edit_success')
+        ], 200);
     }
 
 }

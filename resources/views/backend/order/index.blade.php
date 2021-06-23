@@ -14,7 +14,7 @@
             animation-duration: 0.2s;
         }
 
-        .loading{
+        .loading {
             display: none;
             position: relative;
         }
@@ -42,6 +42,7 @@
                 opacity: 0.9;
             }
         }
+
         .loading {
             margin-top: 200px;
             display: flex;
@@ -50,6 +51,7 @@
             width: 100%;
             height: 100%;
         }
+
         .loading .loading__pill {
             width: 20px;
             height: 20px;
@@ -57,19 +59,22 @@
             border-radius: 50%;
             animation: anim-loading-pill 1s ease-in infinite alternate;
         }
+
         .loading .loading__pill:nth-last-child(1) {
             animation-delay: -0.3333333333s;
         }
+
         .loading .loading__pill:nth-last-child(2) {
             animation-delay: -0.6666666667s;
         }
+
         .loading .loading__pill:nth-last-child(3) {
             animation-delay: -1s;
         }
+
         .loading .loading__pill:not(:last-child) {
             margin-right: 15px;
         }
-
 
 
     </style>
@@ -188,7 +193,8 @@
             </div>
         </div>
 
-        <div class="loading"><span class="loading__pill"></span><span class="loading__pill"></span><span class="loading__pill"></span></div>
+        <div class="loading"><span class="loading__pill"></span><span class="loading__pill"></span><span
+                class="loading__pill"></span></div>
     </div>
 @endsection
 
@@ -267,8 +273,11 @@
                                     <td>${item.from}</td>
                                     <td>${item.to}</td>
                                     <td>${label[status]}</td>
-                                     <td>
-                                                <a href="/admin/orders/${item.id}/edit"  class="btn btn-primary btn-flat">
+                                     <td style="display: flex">
+                                                  <a style='display: ${item.is_check === 0 ? 'block' : 'none'}' href="/admin/orders/${item.id}/check"  class="btn btn-warning btn-flat">
+                                               <i class="fas fa-check"></i>
+                                            </a>
+                                                <a style='display: ${item.is_check !== 0 ? 'block' : 'none'}' href="/admin/orders/${item.id}/edit"  class="btn btn-primary btn-flat">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             </td>
@@ -280,11 +289,11 @@
 
                         })
 
-                        setTimeout(()=>{
-                            $('.table-wrapper').css('display','block');
+                        setTimeout(() => {
+                            $('.table-wrapper').css('display', 'block');
                             $('.loading').hide();
 
-                        },1000);
+                        }, 1000);
 
                         $('table').dataTable({
                             searching: false,

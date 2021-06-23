@@ -54,6 +54,7 @@ class OrderController extends Controller
      */
     public function store(OrderRequest $request): JsonResponse
     {
+
         $order = $request->get('order');
 
         unset($order['reader_name']);
@@ -68,6 +69,12 @@ class OrderController extends Controller
             $order['created_by'] = \Illuminate\Support\Facades\Auth::user()->id;
             $order['updated_by'] = \Illuminate\Support\Facades\Auth::user()->id;
             $order['is_done'] = 0;
+
+            if (\Illuminate\Support\Facades\Session::has('reader_id') && \Illuminate\Support\Facades\Session::has('book_id')) {
+                $order['is_check'] = 0;
+                \Illuminate\Support\Facades\Session::forget('reader_id');
+                \Illuminate\Support\Facades\Session::forget('book_id');
+            }
 
             $book = Book::find($order['book_id']);
 
@@ -116,8 +123,8 @@ class OrderController extends Controller
      */
     public function edit(int $id)
     {
-        return view('backend.order.edit',[
-            'order' => Order::with('book','reader')->where('id',$id)->get()->map(function($item){
+        return view('backend.order.edit', [
+            'order' => Order::with('book', 'reader')->where('id', $id)->get()->map(function ($item) {
                 $item->from = Carbon::parse($item->from)->format('d/m/Y');
                 $item->to = Carbon::parse($item->to)->format('d/m/Y');
                 return $item;
@@ -143,16 +150,16 @@ class OrderController extends Controller
             $order->is_done = 1;
             $order->updated_by = \Illuminate\Support\Facades\Auth::user()->id;
             $order->done_at = Carbon::now();
-            $order->book->quantity =  $order->book->quantity + $order->quantity;
+            $order->book->quantity = $order->book->quantity + $order->quantity;
             $order->save();
             $order->book->save();
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return response()->json([
                 'message' => $exception->getMessage()
             ]);
         }
 
-        \Illuminate\Support\Facades\Session::flash('success',trans('order.edit_success'));
+        \Illuminate\Support\Facades\Session::flash('success', trans('order.edit_success'));
 
         return response()->json([
             'redirect' => route('orders.index')
@@ -175,11 +182,11 @@ class OrderController extends Controller
     {
         $date = Carbon::createFromFormat('d/m/Y', '05/06/2021');
 
-        $query = Order::with(['reader' => function($query){
+        $query = Order::with(['reader' => function ($query) {
             return $query->withTrashed();
-        },'book' => function($query){
+        }, 'book' => function ($query) {
             return $query->withTrashed();
-        }]);
+        }])->orderBy('is_check');
 
         if ($request->has('reader_name')) {
             $name = Reader::withTrashed()->query()->select('id')->like('name', $request->query('reader_name'))->get()->map(function ($item) {
@@ -231,7 +238,7 @@ class OrderController extends Controller
         }
 
         $data = $query->get()->map(function ($item) {
-            $object = (object) $item->toArray();
+            $object = (object)$item->toArray();
 
             if ($item->is_done === 1) $object->status = 'DONE';
             else {
@@ -260,6 +267,18 @@ class OrderController extends Controller
             'data' => $data
         ], 200);
 
+
+    }
+
+    public function check($id)
+    {
+        $order = Order::findOrFail($id);
+
+        $order->is_check = 1;
+
+        $order->save();
+
+        return redirect()->back()->with('success', trans('action.check_success'));
 
     }
 

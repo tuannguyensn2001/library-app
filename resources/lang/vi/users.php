@@ -15,5 +15,6 @@ return [
     'status' => 'Trạng thái',
     'active' => 'Hoạt động',
     'not_active' => 'Không hoạt động',
-    'profile' => 'Thông tin cá nhân'
+    'profile' => 'Thông tin cá nhân',
+    'members' => 'Thành viên'
 ];

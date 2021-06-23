@@ -10,7 +10,7 @@
             color: #fff;
         }
 
-        .book_thumbnail{
+        .book_thumbnail {
             border-radius: 50%;
         }
     </style>
@@ -56,21 +56,33 @@
                                     <tr>
                                         <td>{{$key+1}}</td>
                                         <td>
-                                            <img class="img-thumbnail" src="{{asset($book->thumbnail)}}" width="50" height="50" alt="">
+                                            <img class="img-thumbnail" src="{{asset($book->thumbnail)}}" width="50"
+                                                 height="50" alt="">
                                         </td>
                                         <td>{{$book->name}}</td>
                                         <td>{{$book->author}}</td>
                                         <td>{{$book->category->name}}</td>
                                         <td>{{$book->quantity}}</td>
                                         <td>
-                                            <a href="{{route('books.edit',['book' => $book->id])}}"
-                                               class="btn btn-primary btn-flat">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{{route('books.destroy',['book' => $book->id])}}"
-                                               class="btn btn-danger delete-reader btn-flat">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
+                                            <form method="post" action="{{route('books.order',['book' => $book->id])}}">
+                                                @csrf
+                                                @if(auth()->user()->is_admin === 2)
+                                                    <button type="submit"
+                                                            class="btn btn-success btn-flat">
+                                                        <i class="fab fa-first-order"></i>
+                                                    </button>
+                                                @endif
+                                                <a href="{{route('books.edit',['book' => $book->id])}}"
+                                                   class="btn btn-primary btn-flat">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{{route('books.destroy',['book' => $book->id])}}"
+                                                   class="btn btn-danger delete-reader btn-flat">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </form>
+
+
                                         </td>
                                     </tr>
                                 @endforeach

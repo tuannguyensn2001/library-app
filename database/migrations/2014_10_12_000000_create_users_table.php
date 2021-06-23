@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->integer('is_admin'); //system thu thu
             $table->integer('is_active')->default(1);
             $table->string('avatar');
+            $table->integer('reader_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

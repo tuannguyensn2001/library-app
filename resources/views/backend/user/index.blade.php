@@ -8,7 +8,6 @@
         }
 
 
-
         .delete-reader {
             color: #fff;
         }
@@ -141,7 +140,28 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    <div class="icheck-primary ">
+                                        <input v-model="user.is_admin" value="2" name="is_admin" type="radio"
+                                               id="is_member">
+                                        <label for="is_member">
+                                            {{trans('users.members')}}
+                                        </label>
+                                    </div>
+                                </div>
+
                             </div>
+
+                            <template v-if="user.is_admin==2">
+                                <div class="form-group">
+                                    <label for="member">Chọn thành viên</label>
+                                    <select v-model="user.reader_id" name="member" id="member">
+                                        @foreach(\App\Models\Reader::all() as $item)
+                                            <option value="{{$item->id}}">{{$item->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </template>
 
                             <div class="form-group">
                                 <div class="icheck-primary ">
@@ -178,9 +198,10 @@
                         </div>
 
                         <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default btn-flat" data-dismiss="modal">{{trans('action.cancel')}}</button>
-                            <button  type="button" @click="deleteUser"
-                                     class="btn btn-danger btn-flat confirm_delete_reader">{{trans('action.confirm')}}</button>
+                            <button type="button" class="btn btn-default btn-flat"
+                                    data-dismiss="modal">{{trans('action.cancel')}}</button>
+                            <button type="button" @click="deleteUser"
+                                    class="btn btn-danger btn-flat confirm_delete_reader">{{trans('action.confirm')}}</button>
                         </div>
                     </div>
                     <!-- /.modal-content -->
@@ -232,7 +253,8 @@
                         password: null,
                         confirm_password: null,
                         is_admin: 0,
-                        is_active: 1
+                        is_active: 1,
+                        reader_id: null
                     },
                     listUsers: JSON.parse(`{!! $users !!}`),
                     type: null
@@ -245,26 +267,26 @@
                         }
                         $('#modal-user').modal('show');
                     },
-                    openModelDelete(id){
-                      this.user = this.listUsers.find(item => item.id === id);
+                    openModelDelete(id) {
+                        this.user = this.listUsers.find(item => item.id === id);
                         $('#modal-default').modal('show');
                     },
-                    deleteUser(){
-                      axios.delete(`/admin/users/${this.user.id}`)
-                        .then(response => {
-                            toastr.success('{{trans('action.delete_success')}}');
-                            this.listUsers = this.listUsers.filter(item => item.id !== this.user.id);
-                        })
-                        .catch(err => toastr.err('{{trans('action.delete_error')}}'))
-                        .finally(() => {
-                            $('#modal-default').modal('hide');
-                        })
+                    deleteUser() {
+                        axios.delete(`/admin/users/${this.user.id}`)
+                            .then(response => {
+                                toastr.success('{{trans('action.delete_success')}}');
+                                this.listUsers = this.listUsers.filter(item => item.id !== this.user.id);
+                            })
+                            .catch(err => toastr.err('{{trans('action.delete_error')}}'))
+                            .finally(() => {
+                                $('#modal-default').modal('hide');
+                            })
                     },
                     confirm() {
                         if (this.type === 'create') {
                             const user = {...this.user};
 
-                            if (!user.name){
+                            if (!user.name) {
                                 toastr.error('Tên không được để trống');
                                 return;
                             }
@@ -273,12 +295,12 @@
                                 toastr.error('Email không được để trống');
                                 return;
                             }
-                            if (user.password.length < 6){
+                            if (user.password.length < 6) {
                                 toastr.error('Mật khẩu tối thiểu 6 ký tự');
                                 return;
                             }
 
-                            if (user.password !== user.confirm_password){
+                            if (user.password !== user.confirm_password) {
                                 toastr.error('Mật khẩu xác nhận không trùng khớp');
                                 return;
                             }
@@ -302,11 +324,10 @@
                         delete user.confirm_password;
                         delete user.password;
 
-                        if (!user.name){
+                        if (!user.name) {
                             toastr.error('Tên không được để trống');
                             return;
                         }
-
 
 
                         axios.put(`/admin/users/${user.id}`, {user})

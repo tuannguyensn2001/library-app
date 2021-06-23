@@ -252,6 +252,18 @@
         //     $('#app').show()
         // },1000);
 
+        let reader_id = null;
+        let book_id = null;
+
+        @if(session('reader_id'))
+            reader_id = '{{session('reader_id')}}'
+        @endif
+
+            @if(session('book_id'))
+            book_id = '{{session('book_id')}}'
+        @endif
+
+        console.log(book_id, reader_id);
 
         new Vue({
             el: '#app',
@@ -263,6 +275,8 @@
                 bookType: 'name',
                 readerSearch: null,
                 bookSearch: null,
+                {{--readers: JSON.parse('{!! json_encode(\App\Models\Reader::all()) !!}'),--}}
+                    {{--books: JSON.parse('{!! json_encode(\App\Models\Book::all()) !!}'),--}}
                 readers: [],
                 books: [],
                 timeOut: null,
@@ -296,6 +310,9 @@
                     event.preventDefault();
                     const action = event.target.getAttribute('action');
 
+                    console.log(action);
+
+
                     axios.post(action, {
                         order: this.order
                     })
@@ -304,7 +321,7 @@
                             window.location.href = redirect;
                         })
                         .catch(err => {
-                            if (err.response.data.errors){
+                            if (err.response.data.errors) {
                                 toastr.error(err.response.data.errors[0])
                             } else {
                                 toastr.error(err.response.data.message);
@@ -322,6 +339,21 @@
                 }
             },
             mounted() {
+                this.books = JSON.parse(`{!! \App\Models\Book::all() !!}`);
+                this.order.book_id = book_id;
+                this.order.book_name = this.books.find(book => book.id === Number(book_id)).name;
+
+                axios.get('{{route('readers.index',['type' => 'api'])}}')
+                    .then(response => {
+                        this.readers = response.data.data;
+                        this.order.reader_id = reader_id;
+                        this.order.reader_name = this.readers.find(reader => reader.id === Number(reader_id)).name;
+                    })
+                    .catch(err => console.log(err));
+
+
+                // this.reader_id = reader_id;
+                // this.book_id = book_id;
                 $('.date').datetimepicker({
                     format: 'DD/MM/YYYY',
                     setDateTime: new Date(),
@@ -337,6 +369,14 @@
 
             },
             watch: {
+                // 'order.reader_id'(value) {
+                //     console.log(value);
+                //     this.order.reader_name = this.readers.find(reader => reader.id === value).name;
+                // },
+                // 'order.book_id'(value) {
+                //     console.log(value);
+                //     this.order.book_name = this.books.find(book => book.id === value).name;
+                // },
                 readerType(value) {
                     this.readerSearch = null;
                     this.readers = [];

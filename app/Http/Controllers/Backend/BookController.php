@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\Auth;
 use App\Http\Requests\BookRequest;
 use App\Models\Book;
 use App\Models\Category;
@@ -77,11 +78,11 @@ class BookController extends Controller
     public function store(BookRequest $request): \Illuminate\Http\RedirectResponse
     {
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'thumbnail' => 'file|required'
-         ]);
+        ]);
 
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return redirect()->back()->withErrors(trans('books.file.thumbnail'))->withInput();
         }
 
@@ -124,7 +125,7 @@ class BookController extends Controller
      */
     public function edit($id)
     {
-        return view('backend.book.edit',[
+        return view('backend.book.edit', [
             'book' => Book::find($id),
             'categories' => Category::all()
         ]);
@@ -142,7 +143,7 @@ class BookController extends Controller
         $data = $request->only('name', 'category_id', 'language', 'description', 'quantity', 'author');
         $data['updated_by'] = \Illuminate\Support\Facades\Auth::user()->id;
 
-        if ($request->has('thumbnail')){
+        if ($request->has('thumbnail')) {
             $file = $request->file('thumbnail');
             $thumbnail = Storage::put('public/book', $file);
 
@@ -150,8 +151,8 @@ class BookController extends Controller
         }
 
         try {
-            Book::where('id',$id)->update($data);
-        } catch (\Exception $exception){
+            Book::where('id', $id)->update($data);
+        } catch (\Exception $exception) {
             dd($exception);
             return back()->with('error', trans('action.edit_error'))->withInput();
         }
@@ -170,7 +171,7 @@ class BookController extends Controller
     {
         try {
             Book::find($id)->delete();
-        } catch (Exception $exception){
+        } catch (Exception $exception) {
             return response()->json([
                 'message' => trans('action.delete_error')
             ], 400);
@@ -178,4 +179,18 @@ class BookController extends Controller
         Session::flash('success', trans('action.delete_success'));
         return response()->json([], 200);
     }
+
+    public function order($id)
+    {
+        Session::put('reader_id', \Illuminate\Support\Facades\Auth::user()->reader_id);
+        Session::put('book_id', $id);
+        return redirect()->route('orders.create');
+//      try {
+//          Reader::create([
+//              ''
+//          ])
+//      }
+
+    }
+
 }

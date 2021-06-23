@@ -21,6 +21,7 @@ class CreateOrdersTable extends Migration
             $table->date('to');
             $table->integer('created_by');
             $table->integer('updated_by');
+            $table->integer('is_check')->default(1);
             $table->integer('quantity');
             $table->integer('is_done');
             $table->timestamp('done_at')->nullable();
